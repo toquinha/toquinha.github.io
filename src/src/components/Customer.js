@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button, Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+
 
 class Customer extends React.Component {
     constructor() {
@@ -9,7 +11,7 @@ class Customer extends React.Component {
         }
     }
     componentDidMount() {
-    fetch('https://toquinha.herokuapp.com/').then(results => {return results.json();}).then(data => {
+    fetch('http://localhost:8080/customer').then(results => {return results.json();}).then(data => {
       console.log(data);
       this.setState((prevState, props) =>{
           prevState.customers = data;
@@ -24,6 +26,7 @@ class Customer extends React.Component {
       return (
         <div class="container">
             <h1> Clientes: </h1>
+            <Link to='/editCustomer'><Button bsStyle="primary">Novo cliente</Button></Link>
             <Table striped bordered condensed hover>
             <thead>
                 <tr>
