@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Col, ControlLabel, FormControl } from 'react-bootstrap';
+import {submitAuthenticatedForm} from '../helper/RequestHelper'
 // import { Link } from 'react-router-dom';
 
 class EditCustomer extends React.Component {
@@ -20,14 +21,8 @@ class EditCustomer extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         console.log(JSON.stringify(this.state));
-        fetch("http://localhost:8080/customer", {
-            method: 'POST',
-            headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        }).then((response) => { if (response.ok) {
+        submitAuthenticatedForm("http://localhost:8080/customer", this.state)
+        .then((response) => { if (response.ok) {
             console.log("foi");
             this.setState({shouldRedirect: true});
         } });

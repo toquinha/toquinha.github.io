@@ -4,6 +4,7 @@ import Home from './Home'
 import Customer from './Customer'
 import Pet from './Pet'
 import EditCustomer from './EditCustomer'
+import LoginScreen from './LoginScreen'
 
 class Main extends React.Component {
     render() {
@@ -14,6 +15,7 @@ class Main extends React.Component {
             <Route path='/clientes' component={Customer}/>
             <Route path='/pets' component={Pet}/>
             <Route path = '/editCustomer/:customerId?' component={EditCustomer}/>
+            <Route path = '/login' component={LoginScreen}/>
             </Switch>
         </main>
       );
