@@ -10,6 +10,8 @@ class Home extends React.Component {
     }
     performAuthenticatedRequest('http://localhost:8080/', "GET").then(results => {
       this.setState({shouldRedirect : !results.ok})
+    }).catch(error => {
+      this.setState({shouldRedirect : true})
     });
   }
   componentDidMount() {

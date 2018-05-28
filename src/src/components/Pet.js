@@ -1,6 +1,7 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import { performAuthenticatedRequest } from '../helper/RequestHelper'
+import { Link  } from 'react-router-dom';
 
 class Pet extends React.Component {
   constructor() {
@@ -38,6 +39,7 @@ class Pet extends React.Component {
     return (
       <div class="container">
           <h1> Pets: </h1>
+          <Link to='/editPet'><Button bsStyle="primary">Novo Pet</Button></Link>
           <Table striped bordered condensed hover>
           <thead>
               <tr>
@@ -50,9 +52,9 @@ class Pet extends React.Component {
             <tbody>
               {
                   this.state.pets.map(p => { return (
-                      <tr>
+                      <tr key= {p.id}>
                           <td>
-                              {p.name}
+                              <Link to={'/editPet/'+p.id}> {p.name} </Link>
                           </td>
                           <td>
                               {p.age}

@@ -47,7 +47,7 @@ class EditCustomer extends React.Component {
                     Email
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="email" type="email" placeholder="Email" onChange = {this.handleChange.bind(this)}/>
+                    <FormControl name="email" type="email" placeholder="Email" onChange = {this.handleChange.bind(this)} value={this.state.email}/>
                     </Col>
                 </FormGroup>
 
@@ -56,7 +56,7 @@ class EditCustomer extends React.Component {
                     Telefone
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="phone" type="text" placeholder="(19) 9 9999-9999" onChange = {this.handleChange.bind(this)} />
+                    <FormControl name="phone" type="text" placeholder="(19) 9 9999-9999" onChange = {this.handleChange.bind(this) } value={this.state.phone} />
                     </Col>
                 </FormGroup>
 

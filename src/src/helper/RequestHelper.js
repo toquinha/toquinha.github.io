@@ -8,7 +8,7 @@ function performAuthenticatedRequest(url, methodStr) {
 }
 
 function submitAuthenticatedForm(url, state) {
-    return fetch("http://localhost:8080/customer", {
+    return fetch(url, {
             method: 'POST',
             headers: {
             'Authorization': 'Bearer ' + localStorage.getItem("token"),
