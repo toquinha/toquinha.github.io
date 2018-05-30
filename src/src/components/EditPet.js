@@ -7,14 +7,16 @@ import Autosuggest from 'react-bootstrap-autosuggest'
 
 
 class EditPet extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        const { match: { params : { petId }} } = this.props;
         this.state = {
             formsDisabled : false,
-            name: "",
-            ownerId: "",
+            id: petId,
+            name : "",
             breed: "",
-            age: 0,
+            age: "",
+            owner: {name: "", id: ""},
             shouldRedirect: false,
             customers: [],
             mapClientId: []
@@ -29,18 +31,9 @@ class EditPet extends React.Component {
                 this.setState(data);
             });
         }
-        performAuthenticatedRequest('http://localhost:8080/customer', "GET").then(results => {return results.json();}).then(data => {
+        performAuthenticatedRequest('http://localhost:8080/shortCustomer', "GET").then(results => {return results.json();}).then(data => {
           console.log(data);
-          this.setState((prevState, props) =>{
-              prevState.customers = data;
-              return prevState;
-          });
-          data.map((c) => {this.setState((prevState, props)=> {
-            prevState.mapClientId[c.id] = c.name;
-            return prevState;
-          });
-          return c;
-        });
+          this.setState({customers: data});
         });
     }
     handleChange(event) {
@@ -56,14 +49,13 @@ class EditPet extends React.Component {
             this.setState({shouldRedirect: true});
         } });
     }
+    onSelectChange(obj) {
+        console.log(obj);
+    }
     onSelect(obj) {
+        console.log(obj)
         if(obj != null) {
-            if (obj.id != null) {
-                console.log(obj.id);
-                this.setState({ownerId: obj.id});
-            } else {
-                this.setState({ownerId: obj});
-            }
+            this.setState({owner: obj})
         }
     }
     render() {
@@ -90,8 +82,10 @@ class EditPet extends React.Component {
                     placeholder="Selecione ou digite o nome do dono"
                     itemValuePropName="name"
                     onSelect={this.onSelect.bind(this)}
+                    onChange={this.onSelectChange}
                     disabled={this.state.formsDisabled}
-                    // value={this.state.ownerId}
+                    // datalistOnly
+                    value={this.state.owner}
                     valueIsItem={true}
                     />
                 </Col>
