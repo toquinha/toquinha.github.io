@@ -32,7 +32,7 @@ class Customer extends React.Component {
     render() {
       if(!this.state.shouldRedirect){
         return (
-            <div class="container">
+            <div className="container">
                 <h1> Clientes: </h1>
                 <Link to='/editCustomer'><Button bsStyle="primary">Novo cliente</Button></Link>
                 <Table striped bordered condensed hover>
@@ -46,7 +46,7 @@ class Customer extends React.Component {
                 <tbody>
                     {
                         this.state.customers.map(c => { return (
-                            <tr>
+                            <tr key={c.id}>
                                 <td>
                                     {c.name}
                                 </td>

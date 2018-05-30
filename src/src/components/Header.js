@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavItem} from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 class Header extends React.Component {
     render() {
@@ -9,17 +10,23 @@ class Header extends React.Component {
           <header>
             <Navbar>
             <Navbar.Header>
-                <Navbar.Brand>
-                    <Link to='/'>Home</Link>
-                </Navbar.Brand>
+              <LinkContainer to="/">
+                  <Navbar.Brand>
+                     Home
+                  </Navbar.Brand>
+              </LinkContainer>
             </Navbar.Header>
             <Nav>
-                <NavItem>
-                <Link to='/clientes'>Customer</Link>
-                </NavItem>
-                <NavItem>
-                <Link to='/pets'>Pet</Link>
-                </NavItem>
+                <LinkContainer to="/clientes">
+                  <NavItem>
+                    Customer
+                  </NavItem>
+                </LinkContainer>
+                <LinkContainer to="/pets">
+                  <NavItem>
+                    Pet
+                  </NavItem>
+                </LinkContainer>
             </Nav>
             </Navbar>
             </header>

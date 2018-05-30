@@ -13,7 +13,8 @@ class Schedule extends React.Component {
     }
     onDateChange(date) {
         this.setState({date});
-        console.log(date._d);
+        date.set({h: 11, m: 11});
+        console.log(date);
     }
     render() {
         moment.locale('pt-br');

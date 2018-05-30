@@ -37,7 +37,7 @@ class Pet extends React.Component {
 
   render() {
     return (
-      <div class="container">
+      <div className="container">
           <h1> Pets: </h1>
           <Link to='/editPet'><Button bsStyle="primary">Novo Pet</Button></Link>
           <Table striped bordered condensed hover>
