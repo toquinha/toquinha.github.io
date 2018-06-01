@@ -19,12 +19,17 @@ class Header extends React.Component {
             <Nav>
                 <LinkContainer to="/clientes">
                   <NavItem>
-                    Customer
+                    Clientes
                   </NavItem>
                 </LinkContainer>
                 <LinkContainer to="/pets">
                   <NavItem>
-                    Pet
+                    Pets
+                  </NavItem>
+                </LinkContainer>
+                <LinkContainer to="/agenda">
+                  <NavItem>
+                    Banho e Tosa
                   </NavItem>
                 </LinkContainer>
             </Nav>

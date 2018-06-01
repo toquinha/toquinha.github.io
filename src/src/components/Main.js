@@ -7,6 +7,7 @@ import EditCustomer from './EditCustomer'
 import EditPet from './EditPet'
 import LoginScreen from './LoginScreen'
 import Schedule from './Schedule'
+import EditSchedule from './EditSchedule'
 
 class Main extends React.Component {
     render() {
@@ -20,6 +21,7 @@ class Main extends React.Component {
             <Route path = '/editPet/:petId?' component={EditPet}/>
             <Route path = '/login' component={LoginScreen}/>
             <Route path = '/agenda' component={Schedule}/>
+            <Route path = '/editSchedule/:scheduleId?' component={EditSchedule}/>
             </Switch>
         </main>
       );

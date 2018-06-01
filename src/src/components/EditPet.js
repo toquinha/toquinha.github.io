@@ -114,7 +114,7 @@ class EditPet extends React.Component {
                     <Button type="submit">Salvar</Button>
                     </Col>
                 </FormGroup>
-                </Form>;
+                </Form>
             </div>
         )}
         else {
