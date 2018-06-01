@@ -13,7 +13,7 @@ class Customer extends React.Component {
         }
     }
     componentDidMount() {
-    performAuthenticatedRequest('http://localhost:8080/customer', "GET").then((response) => response.json()
+    performAuthenticatedRequest('https://toquinha.herokuapp.com/customer', "GET").then((response) => response.json()
     .then(data => ({ok: response.ok, body: data})).then(obj => {
       console.log(obj);
       if(obj.ok) {
@@ -40,7 +40,7 @@ class Customer extends React.Component {
                     <tr>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Ações</th>
+                    <th>Telefone</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,8 +54,7 @@ class Customer extends React.Component {
                                     {c.email}
                                 </td>
                                 <td>
-                                    <button onClick={() => this.showAlert(c.id)}>Test</button>
-                                    <Button onClick={() => this.showAlert(c.id)} bsStyle="primary">Primary</Button>
+                                    {c.phone}
                                 </td>
                             </tr>
                         ) 

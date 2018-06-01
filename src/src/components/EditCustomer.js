@@ -21,7 +21,7 @@ class EditCustomer extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         console.log(JSON.stringify(this.state));
-        submitAuthenticatedForm("http://localhost:8080/customer", this.state)
+        submitAuthenticatedForm("https://toquinha.herokuapp.com/customer", this.state)
         .then((response) => { if (response.ok) {
             console.log("foi");
             this.setState({shouldRedirect: true});

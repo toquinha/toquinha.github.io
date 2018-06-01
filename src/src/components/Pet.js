@@ -13,7 +13,7 @@ class Pet extends React.Component {
     }
   }
   componentDidMount() {
-    performAuthenticatedRequest('http://localhost:8080/customer', "GET").then(results => {return results.json();}).then(data => {
+    performAuthenticatedRequest('https://toquinha.herokuapp.com/customer', "GET").then(results => {return results.json();}).then(data => {
       console.log(data);
       this.setState((prevState, props) =>{
           prevState.customers = data;
@@ -26,7 +26,7 @@ class Pet extends React.Component {
       return c;
     });
     });
-      performAuthenticatedRequest('http://localhost:8080/pet', "GET").then(results => {return results.json();}).then(data => {
+      performAuthenticatedRequest('https://toquinha.herokuapp.com/pet', "GET").then(results => {return results.json();}).then(data => {
       console.log(data);
       this.setState({pets : data});
     });
