@@ -11,15 +11,9 @@ class Schedule extends React.Component {
         super();
         moment.locale('pt-br');
         var array = [];
-        performAuthenticatedRequest('https://toquinha.herokuapp.com/scheduleItem/'+moment.utc().set({hours : 0}).toJSON()+'/'+moment.utc().add('days', 1).toJSON(), "GET")
-        .then((response) => response.json()
-        .then(data => ({ok: response.ok, body: data})).then(obj => {
-        console.log(obj);
-        this.setState({teste: {body: obj.body}})
-        }));
         this.state = {
             startDate: moment(),
-            endDate: moment().add('days', 1),
+            endDate: moment().add(1, 'days'),
             teste: {body: array}
         }
     }
@@ -38,6 +32,14 @@ class Schedule extends React.Component {
     }
     convertDateFormat(dateArray) {
         return dateArray[2]+"/"+dateArray[1]+"/"+dateArray[0]+" "+dateArray[3]+":"+dateArray[4];
+    }
+    componentDidMount() {
+        performAuthenticatedRequest('https://toquinha.herokuapp.com/scheduleItem/'+this.state.startDate.utc().set({hours : 0}).toJSON()+'/'+this.state.endDate.utc().toJSON(), "GET")
+        .then((response) => response.json()
+        .then(data => ({ok: response.ok, body: data})).then(obj => {
+        console.log(obj);
+        this.setState({teste: {body: obj.body}})
+        }));
     }
     render() {
         
