@@ -48,7 +48,7 @@ class Customer extends React.Component {
                         this.state.customers.map(c => { return (
                             <tr key={c.id}>
                                 <td>
-                                    {c.name}
+                                    <Link to ={'/editCustomer/'+c.id}>{c.name}</Link>
                                 </td>
                                 <td>
                                     {c.email}

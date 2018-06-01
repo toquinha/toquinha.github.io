@@ -1,22 +1,34 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Col, ControlLabel, FormControl } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import {submitAuthenticatedForm} from '../helper/RequestHelper'
+import { performAuthenticatedRequest } from '../helper/RequestHelper'
+import EditButton from "./reusable/EditButton"
+import SubmitButton from "./reusable/SubmitButton"
+
 // import { Link } from 'react-router-dom';
 
 class EditCustomer extends React.Component {
     constructor() {
         super();
         this.state = {
+            id: "",
             name: "",
             email: "",
             phone: "",
-            shouldRedirect: false
+            shouldRedirect: false,
+            formsDisabled: false,
+            pets:[]
         }
     }
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value});
         console.log(this.state[event.target.name]);
+    }
+    test(){
+        console.log("dae");
     }
     handleSubmit(event) {
         event.preventDefault();
@@ -27,19 +39,29 @@ class EditCustomer extends React.Component {
             this.setState({shouldRedirect: true});
         } });
     }
+    componentDidMount() {
+        const { match: { params : { customerId }} } = this.props;
+        console.log(customerId);
+        this.setState({formsDisabled : customerId !== undefined});
+        if (customerId !== undefined) {
+            performAuthenticatedRequest("https://toquinha.herokuapp.com/customer/"+customerId, "GET").then(results => {return results.json();}).then(data => {
+                console.log(data);
+                this.setState(data);
+            });
+        }
+    }
     render() {
         const { match: { params } } = this.props;
         if (!this.state.shouldRedirect) {
         return(
             <div className ="container">
-            <h1>Dados do cliente {params.customerId}</h1>
             <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
                 <FormGroup controlId="formHorizontalEmail">
                     <Col componentClass={ControlLabel} sm={2}>
                     Nome
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="name" onChange = {this.handleChange.bind(this)} type="Text" placeholder="João da Silva" value={this.state.name}/>
+                    <FormControl disabled={this.state.formsDisabled} name="name" onChange = {this.handleChange.bind(this)} type="Text" placeholder="João da Silva" value={this.state.name}/>
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="formHorizontalEmail">
@@ -47,7 +69,7 @@ class EditCustomer extends React.Component {
                     Email
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="email" type="email" placeholder="Email" onChange = {this.handleChange.bind(this)} value={this.state.email}/>
+                    <FormControl disabled={this.state.formsDisabled} name="email" type="email" placeholder="Email" onChange = {this.handleChange.bind(this)} value={this.state.email}/>
                     </Col>
                 </FormGroup>
 
@@ -56,7 +78,7 @@ class EditCustomer extends React.Component {
                     Telefone
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="phone" type="text" placeholder="(19) 9 9999-9999" onChange = {this.handleChange.bind(this) } value={this.state.phone} />
+                    <FormControl disabled={this.state.formsDisabled} name="phone" type="text" placeholder="(19) 9 9999-9999" onChange = {this.handleChange.bind(this) } value={this.state.phone} />
                     </Col>
                 </FormGroup>
 
@@ -67,7 +89,7 @@ class EditCustomer extends React.Component {
                     CEP
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="text" placeholder="30240-230" />
+                    <FormControl disabled={this.state.formsDisabled} type="text" placeholder="30240-230" />
                     </Col>
                 </FormGroup>
 
@@ -76,7 +98,7 @@ class EditCustomer extends React.Component {
                     Logradouro
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="text" placeholder="Rua da Cuca" />
+                    <FormControl disabled={this.state.formsDisabled} type="text" placeholder="Rua da Cuca" />
                     </Col>
                 </FormGroup>
 
@@ -85,7 +107,7 @@ class EditCustomer extends React.Component {
                     Número
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="number" placeholder="12" />
+                    <FormControl disabled={this.state.formsDisabled} type="number" placeholder="12" />
                     </Col>
                 </FormGroup>
 
@@ -94,7 +116,7 @@ class EditCustomer extends React.Component {
                     Complemento
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="text" placeholder="Ap 2" />
+                    <FormControl disabled={this.state.formsDisabled} type="text" placeholder="Ap 2" />
                     </Col>
                 </FormGroup>
 
@@ -103,7 +125,7 @@ class EditCustomer extends React.Component {
                     Estado
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="text" placeholder="Minas Gerais" />
+                    <FormControl disabled={this.state.formsDisabled} type="text" placeholder="Minas Gerais" />
                     </Col>
                 </FormGroup>
 
@@ -112,16 +134,44 @@ class EditCustomer extends React.Component {
                     Cidade
                     </Col>
                     <Col sm={10}>
-                    <FormControl type="text" placeholder="Araguari" />
+                    <FormControl disabled={this.state.formsDisabled} type="text" placeholder="Araguari" />
                     </Col>
                 </FormGroup>
-
+            
                 <FormGroup>
                     <Col smOffset={2} sm={10}>
-                    <Button type="submit">Sign in</Button>
+                    <SubmitButton show={!this.state.formsDisabled}/>
+                    <EditButton onClick={()=>{this.setState({formsDisabled: false})}} show={this.state.formsDisabled}/>
                     </Col>
                 </FormGroup>
                 </Form>;
+                <Table striped bordered condensed hover>
+          <thead>
+              <tr>
+              <th>Nome</th>
+              <th>Idade</th>
+              <th>Raça</th>
+              </tr>
+          </thead>
+            <tbody>
+              {
+                  this.state.pets.map(p => { return (
+                      <tr key= {p.id}>
+                          <td>
+                              <Link to={'/editPet/'+p.id}> {p.name} </Link>
+                          </td>
+                          <td>
+                              {p.age}
+                          </td>
+                          <td>
+                             {p.breed}
+                          </td>
+                      </tr>
+                  ) 
+                  })
+              }
+          </tbody>
+        </Table>
             </div>
         )}
         else {

@@ -5,7 +5,6 @@ import {submitAuthenticatedForm} from '../helper/RequestHelper'
 import { performAuthenticatedRequest } from '../helper/RequestHelper'
 import Autosuggest from 'react-bootstrap-autosuggest'
 
-
 class EditPet extends React.Component {
     constructor(props) {
         super(props);
@@ -57,6 +56,9 @@ class EditPet extends React.Component {
         if(obj != null) {
             this.setState({owner: obj})
         }
+    }
+    enableEdit() {
+        this.setState({formsDisabled: false});
     }
     render() {
         if (!this.state.shouldRedirect) {
@@ -111,6 +113,7 @@ class EditPet extends React.Component {
 
                 <FormGroup>
                     <Col smOffset={2} sm={10}>
+                    <Button onClick={this.enableEdit.bind(this)}>Editar</Button>
                     <Button type="submit">Salvar</Button>
                     </Col>
                 </FormGroup>
