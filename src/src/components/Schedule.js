@@ -62,7 +62,7 @@ class Schedule extends React.Component {
     this.updateList(this.state.startDate);
   }
   updateList(startDate) {
-    performAuthenticatedRequest('http://localhost:8080/scheduleItemMonth/' + startDate.format(), "GET").then((response) => response.json().then(data => ({ok: response.ok, body: data})).then(obj => {
+    performAuthenticatedRequest('https://toquinha.herokuapp.com/scheduleItemMonth/' + startDate.format(), "GET").then((response) => response.json().then(data => ({ok: response.ok, body: data})).then(obj => {
       console.log(obj);
       this.setState({
         teste: {

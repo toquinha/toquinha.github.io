@@ -19,7 +19,7 @@ class LoginScreen extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         console.log(JSON.stringify(this.state));
-        fetch("http://localhost:8080/oauth/token?username="+this.state.email+"&password="+this.state.password+"&grant_type=password", {
+        fetch("https://toquinha.herokuapp.com/oauth/token?username="+this.state.email+"&password="+this.state.password+"&grant_type=password", {
             method: 'POST',
             headers: new Headers( {
             'Authorization': 'Basic ' + btoa("tqinhadacuca:tqinhadacuca"),

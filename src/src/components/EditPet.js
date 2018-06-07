@@ -53,13 +53,13 @@ class EditPet extends React.Component {
       formsDisabled: petId !== undefined
     });
     if (petId !== undefined) {
-      performAuthenticatedRequest("http://localhost:8080/pet/" + petId, "GET").then(results => {
+      performAuthenticatedRequest("https://toquinha.herokuapp.com/pet/" + petId, "GET").then(results => {
         return results.json();
       }).then(data => {
         this.setState(data);
       });
     }
-    performAuthenticatedRequest('http://localhost:8080/shortCustomer', "GET").then(results => {
+    performAuthenticatedRequest('https://toquinha.herokuapp.com/shortCustomer', "GET").then(results => {
       return results.json();
     }).then(data => {
       console.log(data);
@@ -75,7 +75,7 @@ class EditPet extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     console.log(JSON.stringify(this.state));
-    submitAuthenticatedForm("http://localhost:8080/pet", this.state).then((response) => {
+    submitAuthenticatedForm("https://toquinha.herokuapp.com/pet", this.state).then((response) => {
       if (response.ok) {
         console.log("foi");
         this.setState({shouldRedirect: true});

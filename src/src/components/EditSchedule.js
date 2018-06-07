@@ -67,7 +67,7 @@ class EditSchedule extends React.Component {
     event.preventDefault();
     var content = this.state;
     console.log(JSON.stringify(content));
-    submitAuthenticatedForm("http://localhost:8080/scheduleItem", content).then((response) => {
+    submitAuthenticatedForm("https://toquinha.herokuapp.com/scheduleItem", content).then((response) => {
       if (response.ok) {
         console.log("foi");
         this.setState({shouldRedirect: true});
@@ -92,7 +92,7 @@ class EditSchedule extends React.Component {
       formsDisabled: scheduleId !== undefined
     });
     if (scheduleId !== undefined) {
-      performAuthenticatedRequest("http://localhost:8080/scheduleItem/" + scheduleId, "GET").then(results => {
+      performAuthenticatedRequest("https://toquinha.herokuapp.com/scheduleItem/" + scheduleId, "GET").then(results => {
         return results.json();
       }).then(data => {
         data.startTime = moment
@@ -112,7 +112,7 @@ class EditSchedule extends React.Component {
         this.setState(data);
       });
     }
-    performAuthenticatedRequest('http://localhost:8080/pet', "GET").then(results => {
+    performAuthenticatedRequest('https://toquinha.herokuapp.com/pet', "GET").then(results => {
       return results.json();
     }).then(data => {
       console.log(data);

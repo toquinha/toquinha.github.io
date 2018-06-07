@@ -48,7 +48,7 @@ class EditCustomer extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     console.log(JSON.stringify(this.state));
-    submitAuthenticatedForm("http://localhost:8080/customer", this.state).then((response) => {
+    submitAuthenticatedForm("https://toquinha.herokuapp.com/customer", this.state).then((response) => {
       if (response.ok) {
         console.log("foi");
         this.setState({shouldRedirect: true});
@@ -68,7 +68,7 @@ class EditCustomer extends React.Component {
       formsDisabled: customerId !== undefined
     });
     if (customerId !== undefined) {
-      performAuthenticatedRequest("http://localhost:8080/customer/" + customerId, "GET").then(results => {
+      performAuthenticatedRequest("https://toquinha.herokuapp.com/customer/" + customerId, "GET").then(results => {
         return results.json();
       }).then(data => {
         console.log(data);
