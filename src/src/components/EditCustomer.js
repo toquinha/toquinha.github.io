@@ -25,6 +25,12 @@ class EditCustomer extends React.Component {
       name: "",
       email: "",
       phone: "",
+      cep: "",
+      address: "",
+      number: 0,
+      complement: "",
+      state: "",
+      city: "",
       shouldRedirect: false,
       formsDisabled: false,
       pets: []
@@ -142,8 +148,13 @@ class EditCustomer extends React.Component {
               </Col>
               <Col sm={10}>
                 <FormControl
+                  name="cep"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  value={this.state.cep}
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
                   placeholder="30240-230"/>
               </Col>
             </FormGroup>
@@ -154,8 +165,13 @@ class EditCustomer extends React.Component {
               </Col>
               <Col sm={10}>
                 <FormControl
+                  name="address"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  value={this.state.address}
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
                   placeholder="Rua da Cuca"/>
               </Col>
             </FormGroup>
@@ -168,6 +184,11 @@ class EditCustomer extends React.Component {
                 <FormControl
                   disabled={this.state.formsDisabled}
                   type="number"
+                  name="number"
+                  value={this.state.number}
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
                   placeholder="12"/>
               </Col>
             </FormGroup>
@@ -178,8 +199,13 @@ class EditCustomer extends React.Component {
               </Col>
               <Col sm={10}>
                 <FormControl
+                  name="complement"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  value={this.state.complement}
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
                   placeholder="Ap 2"/>
               </Col>
             </FormGroup>
@@ -190,8 +216,13 @@ class EditCustomer extends React.Component {
               </Col>
               <Col sm={10}>
                 <FormControl
+                  name="state"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  value={this.state.state}
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
                   placeholder="Minas Gerais"/>
               </Col>
             </FormGroup>
@@ -202,8 +233,13 @@ class EditCustomer extends React.Component {
               </Col>
               <Col sm={10}>
                 <FormControl
+                  name="city"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
+                  value={this.state.city}
                   placeholder="Araguari"/>
               </Col>
             </FormGroup>

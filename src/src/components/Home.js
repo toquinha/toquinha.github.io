@@ -6,7 +6,7 @@ class Home extends React.Component {
   constructor() {
     super();
     this.state = {
-      shouldRedirect : false
+      shouldRedirect : null
     }
     performAuthenticatedRequest('http://localhost:8080/', "GET").then(results => {
       this.setState({shouldRedirect : !results.ok})
@@ -18,10 +18,13 @@ class Home extends React.Component {
     
   }
   render() {
-    if (!this.state.shouldRedirect){
+    if(this.state.shouldRedirect === null) {
+      return(<div><h1>Carregando</h1></div>)
+    }
+    else if (!this.state.shouldRedirect){
       return (
         <div>
-          <h1> Bem - vindo à toquinha da cuca! </h1>
+          <img className="center" src="toquinha.png"/>
         </div>
       );
     } else {

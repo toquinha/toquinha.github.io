@@ -7,3 +7,70 @@ body {
 .calendar {
   height: 700px;
 }
+
+img.center {
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-primary { 
+  color: #ffffff; 
+  background-color: #D59D9E; 
+  border-color: #F0DDDD; 
+} 
+ 
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active, 
+.btn-primary.active, 
+.btn-primary:active:focus,
+.open .dropdown-toggle.btn-primary { 
+  color: #ffffff; 
+  background-color: #BD8C8D; 
+  border-color: #F0DDDD; 
+} 
+ 
+.btn-primary:active, 
+.btn-primary.active, 
+.open .dropdown-toggle.btn-primary { 
+  background-color: #BF8B8C;
+  background-image: none;
+  box-shadow: none;
+} 
+ 
+.btn-primary.disabled, 
+.btn-primary[disabled], 
+fieldset[disabled] .btn-primary, 
+.btn-primary.disabled:hover, 
+.btn-primary[disabled]:hover, 
+fieldset[disabled] .btn-primary:hover, 
+.btn-primary.disabled:focus, 
+.btn-primary[disabled]:focus, 
+fieldset[disabled] .btn-primary:focus, 
+.btn-primary.disabled:active, 
+.btn-primary[disabled]:active, 
+fieldset[disabled] .btn-primary:active, 
+.btn-primary.disabled.active, 
+.btn-primary[disabled].active, 
+fieldset[disabled] .btn-primary.active { 
+  background-color: #D59D9E; 
+  border-color: #F0DDDD; 
+} 
+ 
+.btn-primary .badge { 
+  color: #D59D9E; 
+  background-color: #ffffff; 
+}
+
+.rbc-event, .CalendarDay__selected, .CalendarDay__selected:active, .CalendarDay__selected:hover {
+  background-color:  #BF8B8C !important;
+  border: 1px solid #8b6768 !important;
+}
+
+.buttonDiv{
+  margin-bottom: 20px;
+}
+
+.DateInput_input__focused{
+  border-bottom: 2px solid #8b6768 !important;
+}
