@@ -1,89 +1,115 @@
 import React from 'react';
-import { DateRangePicker } from 'react-dates';
-import { performAuthenticatedRequest } from '../helper/RequestHelper'
+import {SingleDatePicker} from 'react-dates';
+import {performAuthenticatedRequest} from '../helper/RequestHelper'
 import moment from 'moment';
 import 'moment/min/locales';
-import { Table, Button } from 'react-bootstrap';
-import { Link  } from 'react-router-dom';
+import {Table, Button} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
+import BigCalendar from 'react-big-calendar'
+import "react-big-calendar/lib/css/react-big-calendar.css"
+
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
 class Schedule extends React.Component {
-    constructor() {
-        super();
-        moment.locale('pt-br');
-        var array = [];
-        this.state = {
-            startDate: moment(),
-            endDate: moment().add(1, 'days'),
-            teste: {body: array}
+  constructor() {
+    super();
+    moment.locale('pt-br');
+    var array = [];
+    this.state = {
+      startDate: moment(),
+      endDate: moment().add(1, 'days'),
+      teste: {
+        body: array
+      },
+      events: [
+        {
+          id: 0,
+          title: 'All Day Event very long title',
+          start: moment()
+            .subtract(3, 'hours')
+            .toDate(),
+          end: moment()
+            .add(1, 'hours')
+            .toDate()
+        }, {
+          id: 0,
+          title: 'All Day Event very long title',
+          start: moment()
+            .subtract(3, 'hours')
+            .toDate(),
+          end: moment()
+            .add(1, 'hours')
+            .toDate()
         }
+      ],
+      selectedDate: moment().toDate()
     }
-    onDateChange(date) {
-        this.setState(date)
-        console.log(date.startDate)
-        console.log(date.endDate)
-        if (date.startDate != null && date.endDate != null) {
-            performAuthenticatedRequest('https://toquinha.herokuapp.com/scheduleItem/'+date.startDate.utc().toJSON()+'/'+date.endDate.utc().toJSON(), "GET")
-            .then((response) => response.json()
-            .then(data => ({ok: response.ok, body: data})).then(obj => {
-            console.log(obj);
-            this.setState({teste: {body: obj.body}})
-            }));
+    console.log(moment().format())
+    console.log(moment.utc().toJSON())
+  }
+  onDateChange(date) {
+    this.setState({startDate: date});
+    console.log(date);
+    this.updateList(date);
+  }
+  convertDateFormat(dateArray) {
+    return dateArray[2] + "/" + dateArray[1] + "/" + dateArray[0] + " " + dateArray[3] + ":" + dateArray[4];
+  }
+  componentDidMount() {
+    this.updateList(this.state.startDate);
+  }
+  updateList(startDate) {
+    performAuthenticatedRequest('http://localhost:8080/scheduleItemMonth/' + startDate.format() , "GET").then((response) => response.json().then(data => ({ok: response.ok, body: data})).then(obj => {
+      console.log(obj);
+      this.setState({
+        teste: {
+          body: obj.body
         }
-    }
-    convertDateFormat(dateArray) {
-        return dateArray[2]+"/"+dateArray[1]+"/"+dateArray[0]+" "+dateArray[3]+":"+dateArray[4];
-    }
-    componentDidMount() {
-        performAuthenticatedRequest('https://toquinha.herokuapp.com/scheduleItem/'+this.state.startDate.utc().set({hours : 0}).toJSON()+'/'+this.state.endDate.utc().toJSON(), "GET")
-        .then((response) => response.json()
-        .then(data => ({ok: response.ok, body: data})).then(obj => {
-        console.log(obj);
-        this.setState({teste: {body: obj.body}})
+      });
+      var eventsArray = obj
+        .body
+        .map(item => ({
+          id: item.id,
+          title: item.pet.name + " (" + item.type + ")",
+          start: moment
+            .utc(item.startTime)
+            .local()
+            .toDate(),
+          end: moment
+            .utc(item.endTime)
+            .local()
+            .toDate()
         }));
-    }
-    render() {
-        
-        return (
-        <div className="container">
-        <DateRangePicker
-            startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-            startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-            endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-            endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-            onDatesChange={this.onDateChange.bind(this)} // PropTypes.func.isRequired,
-            focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-            onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-            isOutsideRange={() => false}
-          /> 
-          <Table striped bordered condensed hover>
-          <thead>
-              <tr>
-              <th>Data</th>
-              <th>Pet</th>
-              <th>Tipo</th>
-              </tr>
-          </thead>
-            <tbody>
-              {
-                  this.state.teste.body.map(p => { return (
-                      <tr key= {p.id}>
-                          <td>
-                              {this.convertDateFormat(p.startTime)}
-                          </td>
-                          <td>
-                            <Link to={'/editPet/'+p.pet.id}> {p.pet.name} </Link>
-                          </td>
-                          <td>
-                            {p.type}
-                          </td>
-                      </tr>
-                  ) 
-                  })
-              }
-          </tbody>
-        </Table>
-          </div>);
-    }
+      this.setState({events: eventsArray});
+      console.log("eventos");
+      console.log(eventsArray)
+    }));
+  }
+  render() {
+
+    return (
+      <div className="container calendar">
+        <SingleDatePicker date={this.state.startDate} // momentPropTypes.momentObj or null
+          onDateChange={this.onDateChange.bind(this)} // PropTypes.func.isRequired
+          focused={this.state.focused} // PropTypes.bool
+          onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
+          id="your_unique_id" // PropTypes.string.isRequired,
+        />
+
+        <BigCalendar
+          events={this.state.events}
+          defaultView="week"
+          onNavigate={date => {
+          this.setState({startDate: moment(date)});
+          this.updateList.bind(this)(moment(date));
+          console.log(date);
+        }}
+          date={this.state.startDate.toDate()}
+          onSelectEvent={event => alert(event.title)}
+          onSelectSlot={slotInfo => alert(`selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` + `\nend: ${slotInfo.end.toLocaleString()}` + `\naction: ${slotInfo.action}`)}/>
+      </div>
+    );
+  }
 
 }
 

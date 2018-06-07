@@ -13,7 +13,7 @@ class Customer extends React.Component {
         }
     }
     componentDidMount() {
-    performAuthenticatedRequest('https://toquinha.herokuapp.com/customer', "GET").then((response) => response.json()
+    performAuthenticatedRequest('http://localhost:8080/customer', "GET").then((response) => response.json()
     .then(data => ({ok: response.ok, body: data})).then(obj => {
       console.log(obj);
       if(obj.ok) {
