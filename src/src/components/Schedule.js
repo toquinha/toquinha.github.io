@@ -24,27 +24,7 @@ class Schedule extends React.Component {
       teste: {
         body: array
       },
-      events: [
-        {
-          id: 0,
-          title: 'All Day Event very long title',
-          start: moment()
-            .subtract(3, 'hours')
-            .toDate(),
-          end: moment()
-            .add(1, 'hours')
-            .toDate()
-        }, {
-          id: 0,
-          title: 'All Day Event very long title',
-          start: moment()
-            .subtract(3, 'hours')
-            .toDate(),
-          end: moment()
-            .add(1, 'hours')
-            .toDate()
-        }
-      ],
+      events: [],
       selectedDate: moment().toDate()
     }
     console.log(moment().format())
