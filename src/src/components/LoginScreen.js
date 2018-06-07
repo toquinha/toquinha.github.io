@@ -60,7 +60,7 @@ class LoginScreen extends React.Component {
                     <Button type="submit">Login</Button>
                     </Col>
                 </FormGroup>
-                </Form>;
+                </Form>
             </div>
         )}
         else {
