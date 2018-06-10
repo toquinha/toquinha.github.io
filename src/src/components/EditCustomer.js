@@ -12,19 +12,25 @@ import {Table} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {submitAuthenticatedForm} from '../helper/RequestHelper'
 import {performAuthenticatedRequest} from '../helper/RequestHelper'
+import {getAgeText} from '../helper/AgeHelper'
 import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
+import MaskedFormControl from 'react-bootstrap-maskedinput'
 
 // import { Link } from 'react-router-dom';
 
 class EditCustomer extends React.Component {
+
   constructor() {
     super();
+    this.validationFunctions = [this.validateCellPhone.bind(this), this.validateCep.bind(this),
+       this.validateEmail.bind(this), this.validateName.bind(this), this.validatePhone.bind(this)]    
     this.state = {
-      id: "",
+      id: null,
       name: "",
       email: "",
       phone: "",
+      cellPhone: "",
       cep: "",
       address: "",
       number: 0,
@@ -45,15 +51,71 @@ class EditCustomer extends React.Component {
   test() {
     console.log("dae");
   }
+  validateName() {
+    var regex = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]+ [A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]/;
+    if (regex.test(this.state.name)) 
+      return null;
+    return 'error';
+  }
+  validateEmail() {
+    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (this.state.email === "") {
+      return null;
+    }
+    if (regex.test(this.state.email)) {
+      return null;
+    } else {
+      return 'error';
+    }
+  }
+  validateCellPhone() {
+    var regex = /^\([0-9]{2}\) [0-9]{1} [0-9]{4}-[0-9]{4}/
+    if (this.state.cellPhone === "" || regex.test(this.state.cellPhone)) {
+      return null;
+    }
+    return 'error';
+  }
+  validatePhone() {
+    var regex = /^\([0-9]{2}\) [0-9]{4}-[0-9]{4}/
+    if (this.state.phone === "" || regex.test(this.state.phone)) {
+      return null;
+    }
+    return 'error';
+  }
+  validateCep() {
+    var regex = /^[0-9]{5}-[0-9]{3}$/;
+    if (this.state.cep === "" || regex.test(this.state.cep)) {
+      return null;
+    }
+    return 'error';
+  }
+  handleCepChange(event) {
+    this.setState({cep: event.target.value});
+    var regex = /^[0-9]{5}-[0-9]{3}$/;
+    if (regex.test(event.target.value)) {
+      fetch("https://viacep.com.br/ws/" + event.target.value + "/json/").then((response) => response.json().then(data => ({ok: response.ok, body: data}))).then(obj => {
+        if (obj.ok) {
+          this.setState({address: obj.body.logradouro, state: obj.body.uf, city: obj.body.localidade});
+        }
+      })
+    }
+  }
   handleSubmit(event) {
     event.preventDefault();
-    console.log(JSON.stringify(this.state));
-    submitAuthenticatedForm("https://toquinha.herokuapp.com/customer", this.state).then((response) => {
-      if (response.ok) {
-        console.log("foi");
-        this.setState({shouldRedirect: true});
-      }
+    var validationArray = this.validationFunctions.filter(item => {
+      return item() === "error";
     });
+    if (validationArray.length === 0) {
+      console.log(JSON.stringify(this.state));
+      submitAuthenticatedForm("https://toquinha.herokuapp.com/customer", this.state).then((response) => {
+        if (response.ok) {
+          console.log("foi");
+          this.setState({shouldRedirect: true});
+        }
+      });
+    } else {
+      alert("Existem campos preenchidos incorretamente.");
+    }
   }
   componentDidMount() {
     const {
@@ -88,7 +150,9 @@ class EditCustomer extends React.Component {
             onSubmit={this
             .handleSubmit
             .bind(this)}>
-            <FormGroup controlId="formHorizontalEmail">
+            <FormGroup
+              controlId="formHorizontalEmail"
+              validationState={this.validateName()}>
               <Col componentClass={ControlLabel} sm={2}>
                 Nome
               </Col>
@@ -96,6 +160,8 @@ class EditCustomer extends React.Component {
                 <FormControl
                   disabled={this.state.formsDisabled}
                   name="name"
+                  required
+                  autoFocus
                   onChange={this
                   .handleChange
                   .bind(this)}
@@ -104,7 +170,9 @@ class EditCustomer extends React.Component {
                   value={this.state.name}/>
               </Col>
             </FormGroup>
-            <FormGroup controlId="formHorizontalEmail">
+            <FormGroup
+              controlId="formHorizontalEmail"
+              validationState={this.validateEmail()}>
               <Col componentClass={ControlLabel} sm={2}>
                 Email
               </Col>
@@ -121,16 +189,19 @@ class EditCustomer extends React.Component {
               </Col>
             </FormGroup>
 
-            <FormGroup controlId="formHorizontalPhone">
+            <FormGroup
+              controlId="formHorizontalPhone"
+              validationState={this.validatePhone()}>
               <Col componentClass={ControlLabel} sm={2}>
                 Telefone
               </Col>
               <Col sm={10}>
-                <FormControl
+                <MaskedFormControl
                   disabled={this.state.formsDisabled}
                   name="phone"
                   type="text"
-                  placeholder="(19) 9 9999-9999"
+                  mask='(11) 1111-1111'
+                  placeholder="(19) 3999-9999"
                   onChange={this
                   .handleChange
                   .bind(this)}
@@ -138,22 +209,45 @@ class EditCustomer extends React.Component {
               </Col>
             </FormGroup>
 
+            <FormGroup
+              controlId="formHorizontalPhone"
+              validationState={this.validateCellPhone()}>
+              <Col componentClass={ControlLabel} sm={2}>
+                Celular
+              </Col>
+              <Col sm={10}>
+                <MaskedFormControl
+                  disabled={this.state.formsDisabled}
+                  name="cellPhone"
+                  type="text"
+                  mask='(11) 1 1111-1111'
+                  placeholder="(19) 9 9999-9999"
+                  onChange={this
+                  .handleChange
+                  .bind(this)}
+                  value={this.state.cellPhone}/>
+              </Col>
+            </FormGroup>
+
             <h2>
               Endereço:
             </h2>
 
-            <FormGroup controlId="formHorizontalPassword">
+            <FormGroup
+              controlId="formHorizontalPassword"
+              validationState={this.validateCep()}>
               <Col componentClass={ControlLabel} sm={2}>
                 CEP
               </Col>
               <Col sm={10}>
-                <FormControl
+                <MaskedFormControl
                   name="cep"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  mask='11111-111'
                   value={this.state.cep}
                   onChange={this
-                  .handleChange
+                  .handleCepChange
                   .bind(this)}
                   placeholder="30240-230"/>
               </Col>
@@ -280,7 +374,7 @@ class EditCustomer extends React.Component {
                         </Link>
                       </td>
                       <td>
-                        {p.age}
+                        {getAgeText(p.birthDay)}
                       </td>
                       <td>
                         {p.breed}

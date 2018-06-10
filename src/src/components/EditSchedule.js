@@ -10,12 +10,20 @@ import {
 } from 'react-bootstrap';
 import {submitAuthenticatedForm} from '../helper/RequestHelper'
 import {performAuthenticatedRequest} from '../helper/RequestHelper'
-import Autosuggest from 'react-bootstrap-autosuggest'
+import Autosuggest, { ItemAdapter } from 'react-bootstrap-autosuggest'
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import MaskedFormControl from 'react-bootstrap-maskedinput'
 import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
+import TimePicker from 'rc-time-picker';
+
+class CountryAdapter extends ItemAdapter {
+  renderItem(item) {
+    return <div>{item.name}<span className="abbrev"> {item.owner.name}</span></div>
+  }
+}
+CountryAdapter.instance = new CountryAdapter()
 
 class EditSchedule extends React.Component {
   constructor(props) {
@@ -32,29 +40,15 @@ class EditSchedule extends React.Component {
       shouldRedirect: false,
       formsDisabled: false,
       startTime: moment(),
-      endTime: moment(),
+      endTime: moment().add(1, 'hours'),
       type: "Banho",
       pet: null,
       pets: [],
+      notes: "",
       id: scheduleId,
       startTimeString: "",
       endTimeString: ""
     }
-  }
-  onTimeChange(event) {
-    console.log(event.target.value);
-    var [hours,
-      minutes] = event
-      .target
-      .value
-      .split(':');
-    var date = this.state[event.target.name];
-    date.set('hour', hours);
-    date.set('minute', minutes);
-    console.log(date.utcOffset());
-    this.setState({
-      [event.target.name]: date
-    });
   }
   handleChange(event) {
     this.setState({
@@ -140,6 +134,7 @@ class EditSchedule extends React.Component {
                   name="type"
                   disabled={this.state.formsDisabled}
                   value={this.state.type}
+                  required
                   onChange={this
                   .handleChange
                   .bind(this)}>
@@ -156,7 +151,8 @@ class EditSchedule extends React.Component {
                 <Autosuggest datalist={this.state.pets} placeholder="Selecione ou digite o nome do pet" itemValuePropName="name" onSelect={this
                   .onSelect
                   .bind(this)} onChange={this.onSelectChange} disabled={this.state.formsDisabled} // datalistOnly
-                  value={this.state.pet} valueIsItem={true}/>
+                  value={this.state.pet} valueIsItem={true} required
+                  itemAdapter={CountryAdapter.instance}/>
               </Col>
             </FormGroup>
             <FormGroup controlId="formHorizontalDate">
@@ -172,6 +168,8 @@ class EditSchedule extends React.Component {
                   focused={this.state.focused} // PropTypes.bool
                   onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
                   id="your_unique_id" // PropTypes.string.isRequired,
+                  numberOfMonths={1}
+                  readOnly
                 />
               </Col>
             </FormGroup>
@@ -180,15 +178,16 @@ class EditSchedule extends React.Component {
                 Hora início:
               </Col>
               <Col sm={10}>
-                <MaskedFormControl
+                <TimePicker
                   disabled={this.state.formsDisabled}
-                  type='text'
-                  name='startTime'
-                  mask='11:11'
-                  value={this.state.startTimeString}
-                  onChange={this
-                  .onTimeChange
-                  .bind(this)}/>
+                  value={this.state.startTime}
+                  showSecond={false}
+                  minuteStep={15}
+                  inputReadOnly
+                  allowEmpty={false}
+                  onChange={startTime => {
+                  this.setState({startTime})
+                }}/>
               </Col>
             </FormGroup>
             <FormGroup>
@@ -196,14 +195,29 @@ class EditSchedule extends React.Component {
                 Hora Fim:
               </Col>
               <Col sm={10}>
-                <MaskedFormControl
+                <TimePicker
                   disabled={this.state.formsDisabled}
-                  type='text'
-                  name='endTime'
-                  mask='11:11'
-                  value={this.state.endTimeString}
+                  value={this.state.endTime}
+                  showSecond={false}
+                  inputReadOnly
+                  allowEmpty={false}
+                  minuteStep={15}
+                  onChange={endTime => {
+                  this.setState({endTime})
+                }}/>
+              </Col>
+            </FormGroup>
+            <FormGroup controlId="formControlsTextarea">
+              <Col componentClass={ControlLabel} sm={2}>Observações</Col>
+              <Col sm={10}>
+                <FormControl
+                  name="notes"
+                  value={this.state.notes === null? "" : this.state.notes}
+                  componentClass="textarea"
+                  disabled={this.state.formsDisabled}
+                  rows={5}
                   onChange={this
-                  .onTimeChange
+                  .handleChange
                   .bind(this)}/>
               </Col>
             </FormGroup>

@@ -13,7 +13,8 @@ import {performAuthenticatedRequest} from '../helper/RequestHelper'
 import Autosuggest from 'react-bootstrap-autosuggest'
 import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
-
+import MaskedFormControl from 'react-bootstrap-maskedinput'
+import moment from 'moment';
 
 class EditPet extends React.Component {
   constructor(props) {
@@ -30,11 +31,12 @@ class EditPet extends React.Component {
       id: petId,
       name: "",
       breed: "",
-      age: "",
+      birthDay: moment().subtract(10, "years"),
       owner: {
         name: "",
         id: ""
       },
+      notes: "",
       shouldRedirect: false,
       customers: [],
       mapClientId: []
@@ -56,6 +58,9 @@ class EditPet extends React.Component {
       performAuthenticatedRequest("https://toquinha.herokuapp.com/pet/" + petId, "GET").then(results => {
         return results.json();
       }).then(data => {
+        data.birthDay = moment
+          .utc(data.birthDay)
+          .local();
         this.setState(data);
       });
     }
@@ -72,8 +77,28 @@ class EditPet extends React.Component {
     });
     console.log(this.state[event.target.name]);
   }
+  handleBirthDayChange(event) {
+    var regex = /^[0-9]{2}[\/\-][0-9]{2}[\/\-]\d{4}$/;
+    if (regex.test(event.target.value)) {
+      this.setState({
+        birthDay: moment(event.target.value, "DD/MM/YYYY")
+      })
+      console.log(moment(event.target.value, "DD/MM/YYYY"))
+    }
+  }
+  validateBirthDay() {
+    var regex = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/\d{4}$/;
+    if (regex.test(this.state.birthDay.format("DD/MM/YYYY")) 
+        || "" === this.state.birthDay.format("DD/MM/YYYY")){
+      return null;
+    }
+    return 'error';
+  }
   handleSubmit(event) {
     event.preventDefault();
+    if(this.validateBirthDay() === 'error') {
+      alert("Data de nascimento inválida");
+    }
     console.log(JSON.stringify(this.state));
     submitAuthenticatedForm("https://toquinha.herokuapp.com/pet", this.state).then((response) => {
       if (response.ok) {
@@ -111,6 +136,7 @@ class EditPet extends React.Component {
               <Col sm={10}>
                 <FormControl
                   name="name"
+                  required
                   disabled={this.state.formsDisabled}
                   onChange={this
                   .handleChange
@@ -127,7 +153,7 @@ class EditPet extends React.Component {
                 <Autosuggest datalist={this.state.customers} placeholder="Selecione ou digite o nome do dono" itemValuePropName="name" onSelect={this
                   .onSelect
                   .bind(this)} onChange={this.onSelectChange} disabled={this.state.formsDisabled} // datalistOnly
-                  value={this.state.owner} valueIsItem={true}/>
+                  value={this.state.owner} valueIsItem={true} required/>
               </Col>
             </FormGroup>
 
@@ -140,6 +166,7 @@ class EditPet extends React.Component {
                   name="breed"
                   disabled={this.state.formsDisabled}
                   type="text"
+                  required
                   onChange={this
                   .handleChange
                   .bind(this)}
@@ -147,19 +174,37 @@ class EditPet extends React.Component {
               </Col>
             </FormGroup>
 
-            <FormGroup controlId="formHorizontalAge">
+            <FormGroup controlId="formHorizontalAge" validationState={this.validateBirthDay()}>
               <Col componentClass={ControlLabel} sm={2}>
-                Idade
+                Data de nascimento
               </Col>
               <Col sm={10}>
-                <FormControl
-                  name="age"
+                <MaskedFormControl
+                  name="birthDay"
                   disabled={this.state.formsDisabled}
-                  type="number"
+                  type="text"
+                  mask="11/11/1111"
+                  onChange={this
+                  .handleBirthDayChange
+                  .bind(this)}
+                  value={this
+                  .state
+                  .birthDay
+                  .format("DD/MM/YYYY")}/>
+              </Col>
+            </FormGroup>
+            <FormGroup controlId="formControlsTextarea">
+              <Col componentClass={ControlLabel} sm={2}>Observações</Col>
+              <Col sm={10}>
+                <FormControl
+                  name="notes"
+                  value={this.state.notes === null? "" : this.state.notes}
+                  componentClass="textarea"
+                  disabled={this.state.formsDisabled}
+                  rows={5}
                   onChange={this
                   .handleChange
-                  .bind(this)}
-                  value={this.state.age}/>
+                  .bind(this)}/>
               </Col>
             </FormGroup>
 
@@ -177,7 +222,7 @@ class EditPet extends React.Component {
         </div>
       )
     } else {
-      return (<Redirect to='/clientes'/>);
+      return (<Redirect to='/pets'/>);
     }
   }
 }

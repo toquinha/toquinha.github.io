@@ -7,7 +7,7 @@ import {Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import BigCalendar from 'react-big-calendar'
 import { Redirect } from 'react-router-dom';
-
+import {isMobile} from 'react-device-detect';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
@@ -89,11 +89,14 @@ class Schedule extends React.Component {
               focused={this.state.focused} // PropTypes.bool
               onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
               id="your_unique_id" // PropTypes.string.isRequired,
+              isOutsideRange={() => {return false;}}
+              numberOfMonths={1}
+              readOnly
             />
 
             <BigCalendar
               events={this.state.events}
-              defaultView="week"
+              defaultView={(isMobile)? "day":"week"}
               toolbar={false}
               scrollToTime={new Date()}
               onNavigate={date => {

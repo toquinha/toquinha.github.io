@@ -2,14 +2,15 @@ import React from 'react';
 import {Table, Button} from 'react-bootstrap';
 import {performAuthenticatedRequest} from '../helper/RequestHelper'
 import {Link} from 'react-router-dom';
+import moment from 'moment';
+import {getAgeText} from '../helper/AgeHelper'
 
 class Pet extends React.Component {
   constructor() {
     super();
     this.state = {
       customers: [],
-      pets: [],
-      mapClientId: []
+      pets: []
     }
   }
   componentDidMount() {
@@ -21,13 +22,6 @@ class Pet extends React.Component {
         prevState.customers = data;
         return prevState;
       });
-      data.map((c) => {
-        this.setState((prevState, props) => {
-          prevState.mapClientId[c.id] = c.name;
-          return prevState;
-        });
-        return c;
-      });
     });
     performAuthenticatedRequest('https://toquinha.herokuapp.com/pet', "GET").then(results => {
       return results.json();
@@ -35,11 +29,9 @@ class Pet extends React.Component {
       console.log(data);
       this.setState({pets: data});
     });
-    console.log(this.state.mapClientId)
     console.log(this.state.customers)
     console.log(this.state.pets)
   }
-
   render() {
     return (
       <div className="container">
@@ -73,13 +65,13 @@ class Pet extends React.Component {
                       </Link>
                     </td>
                     <td>
-                      {p.age}
+                      {getAgeText(p.birthDay)}
                     </td>
                     <td>
                       {p.breed}
                     </td>
                     <td>
-                      {this.state.mapClientId[p.ownerId]}
+                      {p.owner.name}
                     </td>
                   </tr>
                 )

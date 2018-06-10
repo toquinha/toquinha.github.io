@@ -5,7 +5,7 @@ body {
 }
 
 .calendar {
-  height: 700px;
+  height: 600px;
 }
 
 img.center {
@@ -73,4 +73,10 @@ fieldset[disabled] .btn-primary.active {
 
 .DateInput_input__focused{
   border-bottom: 2px solid #8b6768 !important;
+}
+
+.abbrev {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 10px;
 }

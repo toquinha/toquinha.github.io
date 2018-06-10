@@ -43,7 +43,7 @@ class LoginScreen extends React.Component {
                     Email
                     </Col>
                     <Col sm={10}>
-                    <FormControl name="email" onChange = {this.handleChange.bind(this)} type="Text" value={this.state.email}/>
+                    <FormControl name="email" onChange = {this.handleChange.bind(this)} type="email" value={this.state.email}/>
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="formHorizontalPassword">
