@@ -22,7 +22,7 @@
 //     };
 //   }
 //   componentDidMount() {
-//     fetch('https://toquinha.herokuapp.com/').then(results => {return results.json();}).then(data => {
+//     fetch('').then(results => {return results.json();}).then(data => {
 //       console.log(data);
 //       this.setState((prevState, props) => {
 //         return { name: data[0].name }

@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 import {submitAuthenticatedForm} from '../helper/RequestHelper'
 import {performAuthenticatedRequest} from '../helper/RequestHelper'
-import Autosuggest, { ItemAdapter } from 'react-bootstrap-autosuggest'
+import Autosuggest, {ItemAdapter} from 'react-bootstrap-autosuggest'
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import MaskedFormControl from 'react-bootstrap-maskedinput'
@@ -20,36 +20,29 @@ import TimePicker from 'rc-time-picker';
 
 class PetAdapter extends ItemAdapter {
   renderItem(item) {
-    return <div>{item.name}<span className="abbrev"> {item.owner.name}</span></div>
+    return <div>{item.name}
+      <span className="abbrev">
+        {item.owner.name}</span>
+    </div>
   }
 }
 PetAdapter.instance = new PetAdapter()
 
-class EditSchedule extends React.Component {
+class EditBooking extends React.Component {
   constructor(props) {
     super(props);
     moment.locale('pt-br');
-    const {
-      match: {
-        params: {
-          scheduleId
-        }
-      }
-    } = this.props;
     this.state = {
       shouldRedirect: false,
       formsDisabled: false,
-      startTime: moment(),
-      endTime: moment().add(1, 'hours'),
-      type: "Banho",
+      checkinTime: moment(),
+      checkoutTime: moment().add(1, 'days'),
       pet: null,
       pets: [],
-      notes: "",
-      id: scheduleId,
-      startTimeString: "",
-      endTimeString: ""
+      notes: ""
     }
   }
+
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -57,55 +50,25 @@ class EditSchedule extends React.Component {
     console.log(this.state[event.target.name]);
     console.log(this.state);
   }
+
+  onSelect(obj) {
+    console.log(obj)
+    this.setState({pet: obj})
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     var content = this.state;
     console.log(JSON.stringify(content));
-    submitAuthenticatedForm("scheduleItem", content).then((response) => {
+    submitAuthenticatedForm("booking", content).then((response) => {
       if (response.ok) {
         console.log("foi");
         this.setState({shouldRedirect: true});
       }
     });
   }
-  onSelect(obj) {
-    console.log(obj)
-    this.setState({pet: obj})
-  }
+
   componentDidMount() {
-    const {
-      match: {
-        params: {
-          scheduleId
-        }
-      }
-    } = this.props;
-    console.log(scheduleId);
-    this.setState({
-      id: scheduleId,
-      formsDisabled: scheduleId !== undefined
-    });
-    if (scheduleId !== undefined) {
-      performAuthenticatedRequest("scheduleItem/" + scheduleId, "GET").then(results => {
-        return results.json();
-      }).then(data => {
-        data.startTime = moment
-          .utc(data.startTime)
-          .local()
-        data.endTime = moment
-          .utc(data.endTime)
-          .local()
-        data.startTimeString = data
-          .startTime
-          .clone()
-          .format("HH:mm")
-        data.endTimeString = data
-          .endTime
-          .clone()
-          .format("HH:mm")
-        this.setState(data);
-      });
-    }
     performAuthenticatedRequest('pet', "GET").then(results => {
       return results.json();
     }).then(data => {
@@ -113,36 +76,18 @@ class EditSchedule extends React.Component {
       this.setState({pets: data});
     });
   }
+
   render() {
     if (!this.state.shouldRedirect) {
       return (
         <div className="container">
-          <h1>Dados do agendamento:</h1>
+          <h1>Dados da hospedagem:</h1>
           <Form
             horizontal
             onSubmit={this
             .handleSubmit
             .bind(this)}>
-            <FormGroup controlId="formControlsSelect">
-              <Col componentClass={ControlLabel} sm={2}>
-                Tipo:
-              </Col>
-              <Col sm={10}>
-                <FormControl
-                  componentClass="select"
-                  placeholder="select"
-                  name="type"
-                  disabled={this.state.formsDisabled}
-                  value={this.state.type}
-                  required
-                  onChange={this
-                  .handleChange
-                  .bind(this)}>
-                  <option value="Banho">Banho</option>
-                  <option value="Tosa">Tosa</option>
-                </FormControl>
-              </Col>
-            </FormGroup>
+
             <FormGroup controlId="formControlsSelect">
               <Col componentClass={ControlLabel} sm={2}>
                 Pet:
@@ -151,68 +96,74 @@ class EditSchedule extends React.Component {
                 <Autosuggest datalist={this.state.pets} placeholder="Selecione ou digite o nome do pet" itemValuePropName="name" onSelect={this
                   .onSelect
                   .bind(this)} onChange={this.onSelectChange} disabled={this.state.formsDisabled} // datalistOnly
-                  value={this.state.pet} valueIsItem={true} required
-                  itemAdapter={PetAdapter.instance}/>
+                  value={this.state.pet} valueIsItem={true} required itemAdapter={PetAdapter.instance}/>
               </Col>
             </FormGroup>
             <FormGroup controlId="formHorizontalDate">
               <Col componentClass={ControlLabel} sm={2}>
-                Data:
+                Data de entrada:
               </Col>
-              <Col sm={10}>
-                <SingleDatePicker date={this.state.startTime} // momentPropTypes.momentObj or null
-                  disabled={this.state.formsDisabled} onDateChange={date => this.setState({
-                  startTime: date,
-                  endTime: date.clone()
-                })} // PropTypes.func.isRequired
+              <Col sm={1}>
+                <SingleDatePicker date={this.state.checkinTime} // momentPropTypes.momentObj or null
+                  disabled={this.state.formsDisabled} onDateChange={date => this.setState({checkinTime: date})} // PropTypes.func.isRequired
                   focused={this.state.focused} // PropTypes.bool
                   onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
                   id="your_unique_id" // PropTypes.string.isRequired,
-                  numberOfMonths={1}
-                  readOnly
-                />
+                  numberOfMonths={1} readOnly/>
               </Col>
-            </FormGroup>
-            <FormGroup>
               <Col componentClass={ControlLabel} sm={2}>
-                Hora início:
+                Hora de entrada:
               </Col>
-              <Col sm={10}>
+              <Col sm={4}>
                 <TimePicker
                   disabled={this.state.formsDisabled}
-                  value={this.state.startTime}
+                  value={this.state.checkinTime}
                   showSecond={false}
                   minuteStep={15}
                   inputReadOnly
                   allowEmpty={false}
-                  onChange={startTime => {
-                  this.setState({startTime})
+                  onChange={checkinTime => {
+                  this.setState({checkinTime})
                 }}/>
               </Col>
             </FormGroup>
-            <FormGroup>
+            <FormGroup controlId="formHorizontalDate">
               <Col componentClass={ControlLabel} sm={2}>
-                Hora Fim:
+                Data de saída:
               </Col>
-              <Col sm={10}>
+              <Col sm={1}>
+                <SingleDatePicker date={this.state.checkoutTime} // momentPropTypes.momentObj or null
+                  disabled={this.state.formsDisabled} onDateChange={date => this.setState({checkoutTime: date})} // PropTypes.func.isRequired
+                  focused={this.state.focused} // PropTypes.bool
+                  onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
+                  id="your_unique_id" // PropTypes.string.isRequired,
+                  numberOfMonths={1} readOnly/>
+              </Col>
+              <Col componentClass={ControlLabel} sm={2}>
+                Hora de saída:
+              </Col>
+              <Col sm={4}>
                 <TimePicker
                   disabled={this.state.formsDisabled}
-                  value={this.state.endTime}
+                  value={this.state.checkoutTime}
                   showSecond={false}
+                  minuteStep={15}
                   inputReadOnly
                   allowEmpty={false}
-                  minuteStep={15}
-                  onChange={endTime => {
-                  this.setState({endTime})
+                  onChange={checkoutTime => {
+                  this.setState({checkoutTime})
                 }}/>
               </Col>
             </FormGroup>
+            
             <FormGroup controlId="formControlsTextarea">
               <Col componentClass={ControlLabel} sm={2}>Observações</Col>
               <Col sm={10}>
                 <FormControl
                   name="notes"
-                  value={this.state.notes === null? "" : this.state.notes}
+                  value={this.state.notes === null
+                  ? ""
+                  : this.state.notes}
                   componentClass="textarea"
                   disabled={this.state.formsDisabled}
                   rows={5}
@@ -235,10 +186,9 @@ class EditSchedule extends React.Component {
         </div>
       );
     } else {
-      return (<Redirect to='/agenda'/>);
+      return (<Redirect to='/hotel'/>);
     }
   }
-
 }
 
-export default EditSchedule;
+export default EditBooking;

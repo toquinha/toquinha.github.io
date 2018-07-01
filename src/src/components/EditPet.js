@@ -55,7 +55,7 @@ class EditPet extends React.Component {
       formsDisabled: petId !== undefined
     });
     if (petId !== undefined) {
-      performAuthenticatedRequest("https://toquinha.herokuapp.com/pet/" + petId, "GET").then(results => {
+      performAuthenticatedRequest("pet/" + petId, "GET").then(results => {
         return results.json();
       }).then(data => {
         data.birthDay = moment
@@ -64,7 +64,7 @@ class EditPet extends React.Component {
         this.setState(data);
       });
     }
-    performAuthenticatedRequest('https://toquinha.herokuapp.com/shortCustomer', "GET").then(results => {
+    performAuthenticatedRequest('shortCustomer', "GET").then(results => {
       return results.json();
     }).then(data => {
       console.log(data);
@@ -100,7 +100,7 @@ class EditPet extends React.Component {
       alert("Data de nascimento inválida");
     }
     console.log(JSON.stringify(this.state));
-    submitAuthenticatedForm("https://toquinha.herokuapp.com/pet", this.state).then((response) => {
+    submitAuthenticatedForm("pet", this.state).then((response) => {
       if (response.ok) {
         console.log("foi");
         this.setState({shouldRedirect: true});

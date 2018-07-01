@@ -8,6 +8,8 @@ import EditPet from './EditPet'
 import LoginScreen from './LoginScreen'
 import Schedule from './Schedule'
 import EditSchedule from './EditSchedule'
+import Hotel from './Hotel'
+import EditBooking from './EditBooking'
 
 class Main extends React.Component {
     render() {
@@ -22,6 +24,8 @@ class Main extends React.Component {
             <Route path = '/login' component={LoginScreen}/>
             <Route path = '/agenda' component={Schedule}/>
             <Route path = '/editSchedule/:scheduleId?' component={EditSchedule}/>
+            <Route path = '/hotel' component={Hotel}/>
+            <Route path = '/editBooking/:bookingId?' component={EditBooking}/>
             </Switch>
         </main>
       );

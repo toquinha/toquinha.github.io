@@ -32,6 +32,11 @@ class Header extends React.Component {
                     Banho e Tosa
                   </NavItem>
                 </LinkContainer>
+                <LinkContainer to="/hotel">
+                  <NavItem>
+                    Hotelzinho
+                  </NavItem>
+                </LinkContainer>
             </Nav>
             </Navbar>
             </header>

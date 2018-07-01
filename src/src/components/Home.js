@@ -8,7 +8,7 @@ class Home extends React.Component {
     this.state = {
       shouldRedirect : null
     }
-    performAuthenticatedRequest('https://toquinha.herokuapp.com/', "GET").then(results => {
+    performAuthenticatedRequest('', "GET").then(results => {
       this.setState({shouldRedirect : !results.ok})
     }).catch(error => {
       this.setState({shouldRedirect : true})

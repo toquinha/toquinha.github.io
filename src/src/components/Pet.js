@@ -14,7 +14,7 @@ class Pet extends React.Component {
     }
   }
   componentDidMount() {
-    performAuthenticatedRequest('https://toquinha.herokuapp.com/customer', "GET").then(results => {
+    performAuthenticatedRequest('customer', "GET").then(results => {
       return results.json();
     }).then(data => {
       console.log(data);
@@ -23,7 +23,7 @@ class Pet extends React.Component {
         return prevState;
       });
     });
-    performAuthenticatedRequest('https://toquinha.herokuapp.com/pet', "GET").then(results => {
+    performAuthenticatedRequest('pet', "GET").then(results => {
       return results.json();
     }).then(data => {
       console.log(data);

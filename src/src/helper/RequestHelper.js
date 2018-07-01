@@ -1,5 +1,7 @@
+let baseUrl = "http://localhost:8080/"
+
 function performAuthenticatedRequest(url, methodStr) {
-    return fetch(url, {
+    return fetch(baseUrl + url, {
         method: methodStr,
         headers: new Headers( {
             'Authorization': 'Bearer ' + localStorage.getItem("token"),
@@ -8,7 +10,7 @@ function performAuthenticatedRequest(url, methodStr) {
 }
 
 function submitAuthenticatedForm(url, state) {
-    return fetch(url, {
+    return fetch(baseUrl + url, {
             method: 'POST',
             headers: {
             'Authorization': 'Bearer ' + localStorage.getItem("token"),
@@ -19,4 +21,4 @@ function submitAuthenticatedForm(url, state) {
         })
 }
 
-export { performAuthenticatedRequest , submitAuthenticatedForm};
+export { performAuthenticatedRequest , submitAuthenticatedForm, baseUrl};

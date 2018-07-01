@@ -107,7 +107,7 @@ class EditCustomer extends React.Component {
     });
     if (validationArray.length === 0) {
       console.log(JSON.stringify(this.state));
-      submitAuthenticatedForm("https://toquinha.herokuapp.com/customer", this.state).then((response) => {
+      submitAuthenticatedForm("customer", this.state).then((response) => {
         if (response.ok) {
           console.log("foi");
           this.setState({shouldRedirect: true});
@@ -130,7 +130,7 @@ class EditCustomer extends React.Component {
       formsDisabled: customerId !== undefined
     });
     if (customerId !== undefined) {
-      performAuthenticatedRequest("https://toquinha.herokuapp.com/customer/" + customerId, "GET").then(results => {
+      performAuthenticatedRequest("customer/" + customerId, "GET").then(results => {
         return results.json();
       }).then(data => {
         console.log(data);
