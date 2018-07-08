@@ -1,4 +1,4 @@
-let baseUrl = "http://localhost:8080/"
+let baseUrl = "https://toquinha.herokuapp.com/"
 
 function performAuthenticatedRequest(url, methodStr) {
     return fetch(baseUrl + url, {
