@@ -140,6 +140,8 @@ class EditSchedule extends React.Component {
                   .bind(this)}>
                   <option value="Banho">Banho</option>
                   <option value="Tosa">Tosa</option>
+                  <option value="Banho e Tosa">Banho e Tosa</option>
+                  <option value="Outro">Outro</option>
                 </FormControl>
               </Col>
             </FormGroup>

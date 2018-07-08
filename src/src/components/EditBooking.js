@@ -33,6 +33,7 @@ class EditBooking extends React.Component {
     super(props);
     moment.locale('pt-br');
     this.state = {
+      id: null,
       shouldRedirect: false,
       formsDisabled: false,
       checkinTime: moment(),
@@ -69,6 +70,30 @@ class EditBooking extends React.Component {
   }
 
   componentDidMount() {
+    const {
+      match: {
+        params: {
+          bookingId
+        }
+      }
+    } = this.props;
+    console.log(bookingId);
+    this.setState({
+      formsDisabled: bookingId !== undefined
+    });
+    if (bookingId !== undefined) {
+      performAuthenticatedRequest("bookingId/" + bookingId, "GET").then(results => {
+        return results.json();
+      }).then(data => {
+        data.checkinTime = moment
+          .utc(data.checkinTime)
+          .local();
+        data.checkoutTime = moment
+          .utc(data.checkoutTime)
+          .local();
+        this.setState(data);
+      })
+    }
     performAuthenticatedRequest('pet', "GET").then(results => {
       return results.json();
     }).then(data => {
@@ -106,8 +131,8 @@ class EditBooking extends React.Component {
               <Col sm={1}>
                 <SingleDatePicker date={this.state.checkinTime} // momentPropTypes.momentObj or null
                   disabled={this.state.formsDisabled} onDateChange={date => this.setState({checkinTime: date})} // PropTypes.func.isRequired
-                  focused={this.state.focused} // PropTypes.bool
-                  onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
+                  focused={this.state.focusedTwo} // PropTypes.bool
+                  onFocusChange={({focused: focusedTwo}) => this.setState({focusedTwo})} // PropTypes.func.isRequired
                   id="your_unique_id" // PropTypes.string.isRequired,
                   numberOfMonths={1} readOnly/>
               </Col>
@@ -136,7 +161,7 @@ class EditBooking extends React.Component {
                   disabled={this.state.formsDisabled} onDateChange={date => this.setState({checkoutTime: date})} // PropTypes.func.isRequired
                   focused={this.state.focused} // PropTypes.bool
                   onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
-                  id="your_unique_id" // PropTypes.string.isRequired,
+                  id="your_unique_id_2" // PropTypes.string.isRequired,
                   numberOfMonths={1} readOnly/>
               </Col>
               <Col componentClass={ControlLabel} sm={2}>
@@ -155,7 +180,7 @@ class EditBooking extends React.Component {
                 }}/>
               </Col>
             </FormGroup>
-            
+
             <FormGroup controlId="formControlsTextarea">
               <Col componentClass={ControlLabel} sm={2}>Observações</Col>
               <Col sm={10}>
