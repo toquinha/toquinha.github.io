@@ -6,7 +6,8 @@ import {
   FormGroup,
   Col,
   ControlLabel,
-  FormControl
+  FormControl,
+  Modal
 } from 'react-bootstrap';
 import {Table} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
@@ -15,6 +16,8 @@ import {performAuthenticatedRequest} from '../helper/RequestHelper'
 import {getAgeText} from '../helper/AgeHelper'
 import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
+import DeleteButton from "./reusable/DeleteButton"
+import DeleteModal from "./reusable/DeleteModal"
 import MaskedFormControl from 'react-bootstrap-maskedinput'
 
 // import { Link } from 'react-router-dom';
@@ -23,8 +26,23 @@ class EditCustomer extends React.Component {
 
   constructor() {
     super();
-    this.validationFunctions = [this.validateCellPhone.bind(this), this.validateCep.bind(this),
-       this.validateEmail.bind(this), this.validateName.bind(this), this.validatePhone.bind(this)]    
+    this.validationFunctions = [
+      this
+        .validateCellPhone
+        .bind(this),
+      this
+        .validateCep
+        .bind(this),
+      this
+        .validateEmail
+        .bind(this),
+      this
+        .validateName
+        .bind(this),
+      this
+        .validatePhone
+        .bind(this)
+    ]
     this.state = {
       id: null,
       name: "",
@@ -39,7 +57,8 @@ class EditCustomer extends React.Component {
       city: "",
       shouldRedirect: false,
       formsDisabled: false,
-      pets: []
+      petsList: [],
+      showModal: false
     }
   }
   handleChange(event) {
@@ -102,9 +121,11 @@ class EditCustomer extends React.Component {
   }
   handleSubmit(event) {
     event.preventDefault();
-    var validationArray = this.validationFunctions.filter(item => {
-      return item() === "error";
-    });
+    var validationArray = this
+      .validationFunctions
+      .filter(item => {
+        return item() === "error";
+      });
     if (validationArray.length === 0) {
       console.log(JSON.stringify(this.state));
       submitAuthenticatedForm("customer", this.state).then((response) => {
@@ -116,6 +137,13 @@ class EditCustomer extends React.Component {
     } else {
       alert("Existem campos preenchidos incorretamente.");
     }
+  }
+  deleteRequest() {
+    performAuthenticatedRequest("customer/" + this.state.id, "DELETE").then((response) => {
+      if (response.ok) {
+        this.setState({shouldRedirect: true});
+      }
+    })
   }
   componentDidMount() {
     const {
@@ -135,6 +163,11 @@ class EditCustomer extends React.Component {
       }).then(data => {
         console.log(data);
         this.setState(data);
+      });
+      performAuthenticatedRequest("petByOwner/" + customerId, "GET").then(results => {
+        return results.json();
+      }).then(data => {
+        this.setState({petsList: data});
       });
     }
   }
@@ -339,7 +372,7 @@ class EditCustomer extends React.Component {
             </FormGroup>
 
             <FormGroup>
-              <Col smOffset={2} sm={10}>
+              <Col smOffset={2} sm={2}>
                 <SubmitButton show={!this.state.formsDisabled}/>
                 <EditButton
                   onClick={() => {
@@ -347,6 +380,14 @@ class EditCustomer extends React.Component {
                 }}
                   show={this.state.formsDisabled}/>
               </Col>
+              <Col smOffset={7} sm={1}>
+                <DeleteButton
+                  onClick={() => {
+                  this.setState({showModal: true})
+                }}
+                  show={this.state.id !== null}/>
+              </Col>
+
             </FormGroup>
           </Form>
           <h2>
@@ -364,7 +405,7 @@ class EditCustomer extends React.Component {
             <tbody>
               {this
                 .state
-                .pets
+                .petsList
                 .map(p => {
                   return (
                     <tr key={p.id}>
@@ -385,6 +426,14 @@ class EditCustomer extends React.Component {
 }
             </tbody>
           </Table>
+          <DeleteModal
+            showModal={this.state.showModal}
+            onClick={() => {
+            this.setState({showModal: false})
+          }}
+            onDelete={this
+            .deleteRequest
+            .bind(this)}/>
         </div>
       )
     } else {

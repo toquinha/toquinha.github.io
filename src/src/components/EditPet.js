@@ -15,6 +15,8 @@ import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
 import MaskedFormControl from 'react-bootstrap-maskedinput'
 import moment from 'moment';
+import DeleteButton from "./reusable/DeleteButton"
+import DeleteModal from "./reusable/DeleteModal"
 
 class EditPet extends React.Component {
   constructor(props) {
@@ -28,7 +30,7 @@ class EditPet extends React.Component {
     } = this.props;
     this.state = {
       formsDisabled: false,
-      id: petId,
+      id: null,
       name: "",
       breed: "",
       birthDay: moment().subtract(10, "years"),
@@ -71,6 +73,13 @@ class EditPet extends React.Component {
       this.setState({customers: data});
     });
   }
+  deleteRequest() {
+    performAuthenticatedRequest("pet/" + this.state.id, "DELETE").then((response) => {
+      if (response.ok) {
+        this.setState({shouldRedirect: true});
+      }
+    })
+  }
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -88,15 +97,14 @@ class EditPet extends React.Component {
   }
   validateBirthDay() {
     var regex = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/\d{4}$/;
-    if (regex.test(this.state.birthDay.format("DD/MM/YYYY")) 
-        || "" === this.state.birthDay.format("DD/MM/YYYY")){
+    if (regex.test(this.state.birthDay.format("DD/MM/YYYY")) || "" === this.state.birthDay.format("DD/MM/YYYY")) {
       return null;
     }
     return 'error';
   }
   handleSubmit(event) {
     event.preventDefault();
-    if(this.validateBirthDay() === 'error') {
+    if (this.validateBirthDay() === 'error') {
       alert("Data de nascimento inválida");
     }
     console.log(JSON.stringify(this.state));
@@ -174,7 +182,9 @@ class EditPet extends React.Component {
               </Col>
             </FormGroup>
 
-            <FormGroup controlId="formHorizontalAge" validationState={this.validateBirthDay()}>
+            <FormGroup
+              controlId="formHorizontalAge"
+              validationState={this.validateBirthDay()}>
               <Col componentClass={ControlLabel} sm={2}>
                 Data de nascimento
               </Col>
@@ -198,7 +208,9 @@ class EditPet extends React.Component {
               <Col sm={10}>
                 <FormControl
                   name="notes"
-                  value={this.state.notes === null? "" : this.state.notes}
+                  value={this.state.notes === null
+                  ? ""
+                  : this.state.notes}
                   componentClass="textarea"
                   disabled={this.state.formsDisabled}
                   rows={5}
@@ -209,7 +221,7 @@ class EditPet extends React.Component {
             </FormGroup>
 
             <FormGroup>
-              <Col smOffset={2} sm={10}>
+              <Col smOffset={2} sm={2}>
                 <SubmitButton show={!this.state.formsDisabled}/>
                 <EditButton
                   onClick={() => {
@@ -217,8 +229,24 @@ class EditPet extends React.Component {
                 }}
                   show={this.state.formsDisabled}/>
               </Col>
+              <Col smOffset={7} sm={1}>
+                <DeleteButton
+                  onClick={() => {
+                  this.setState({showModal: true})
+                }}
+                  show={this.state.id !== null}/>
+              </Col>
+
             </FormGroup>
           </Form>
+          <DeleteModal
+            showModal={this.state.showModal}
+            onClick={() => {
+            this.setState({showModal: false})
+          }}
+            onDelete={this
+            .deleteRequest
+            .bind(this)}/>
         </div>
       )
     } else {

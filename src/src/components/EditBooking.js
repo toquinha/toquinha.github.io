@@ -17,6 +17,8 @@ import MaskedFormControl from 'react-bootstrap-maskedinput'
 import EditButton from "./reusable/EditButton"
 import SubmitButton from "./reusable/SubmitButton"
 import TimePicker from 'rc-time-picker';
+import DeleteButton from "./reusable/DeleteButton"
+import DeleteModal from "./reusable/DeleteModal"
 
 class PetAdapter extends ItemAdapter {
   renderItem(item) {
@@ -55,6 +57,14 @@ class EditBooking extends React.Component {
   onSelect(obj) {
     console.log(obj)
     this.setState({pet: obj})
+  }
+
+  deleteRequest() {
+    performAuthenticatedRequest("bookingId/" + this.state.id, "DELETE").then((response) => {
+      if (response.ok) {
+        this.setState({shouldRedirect: true});
+      }
+    })
   }
 
   handleSubmit(event) {
@@ -198,7 +208,7 @@ class EditBooking extends React.Component {
               </Col>
             </FormGroup>
             <FormGroup>
-              <Col smOffset={2} sm={10}>
+              <Col smOffset={2} sm={2}>
                 <SubmitButton show={!this.state.formsDisabled}/>
                 <EditButton
                   onClick={() => {
@@ -206,8 +216,23 @@ class EditBooking extends React.Component {
                 }}
                   show={this.state.formsDisabled}/>
               </Col>
+              <Col smOffset={7} sm={1}>
+                <DeleteButton
+                  onClick={() => {
+                  this.setState({showModal: true})
+                }}
+                  show={this.state.id !== null}/>
+              </Col>
             </FormGroup>
           </Form>
+          <DeleteModal
+            showModal={this.state.showModal}
+            onClick={() => {
+            this.setState({showModal: false})
+          }}
+            onDelete={this
+            .deleteRequest
+            .bind(this)}/>
         </div>
       );
     } else {

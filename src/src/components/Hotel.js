@@ -27,7 +27,7 @@ class Hotel extends React.Component {
   }
 
   updateBookings(date) {
-    performAuthenticatedRequest('booking/' + date.format()).then((response) => response.json().then(data => ({ok: response.ok, body: data})).then(obj => {
+    performAuthenticatedRequest('booking/' + date.toJSON()).then((response) => response.json().then(data => ({ok: response.ok, body: data})).then(obj => {
       console.log(obj);
       this.setState({date: date});
       this.setState(obj.body);
